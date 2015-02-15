@@ -1,0 +1,221 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <!--
+     Simple demo project demonstrating the usage of rhuss/docker-maven-plugin
+  -->
+  <groupId>org.jolokia</groupId>
+  <artifactId>docker-maven-sample</artifactId>
+  <version>0.0.1</version>
+
+  <properties>
+    <tomcat.version>7.0.55</tomcat.version>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+  </properties>
+
+  <build>
+    <plugins>
+      <plugin>
+        <!-- The Docker Maven plugin is used to create docker image with the fat jar -->
+        <groupId>org.jolokia</groupId>
+        <artifactId>docker-maven-plugin</artifactId>
+        <version>0.11.1-SNAPSHOT</version>
+        <configuration>
+          <logDate>default</logDate>
+          <autoPull>true</autoPull>
+          <images>
+            <!-- Microservice image holding the FAT-Jar with embedded tomcat -->
+            <image>
+              <!-- Alias name which can used for linking containers during runtime -->
+              <alias>service</alias>
+              <name>jolokia/${project.artifactId}:${project.version}</name>
+
+              <!-- Building the image -->
+              <build>
+                <from>java:8u40</from>
+                <assembly>
+                  <descriptor>assembly.xml</descriptor>
+                </assembly>
+                <ports>
+                  <port>8080</port>
+                </ports>
+                <command>java -Djava.security.egd=file:/dev/./urandom -jar /maven/docker-sample.jar</command>
+              </build>
+
+              <!-- Running the container -->
+              <run>
+                <ports>
+                  <port>tomcat.port:8080</port>
+                </ports>
+                <wait>
+                  <url>http://localhost:${tomcat.port}/access</url>
+                  <time>10000</time>
+                </wait>
+                <links>
+                  <link>db</link>
+                </links>
+                <log>
+                  <color>cyan</color> <prefix>TC</prefix>
+                </log>
+              </run>
+            </image>
+
+            <!-- PostgresSQL Image is used 'as-is' and is linked into the service image -->
+            <image>
+              <alias>db</alias>
+              <name>postgres:9</name>
+              <run>
+                <wait>
+                  <log>database system is ready to accept connections</log>
+                  <time>20000</time>
+                </wait>
+                <log>
+                  <color>yellow</color> <prefix>DB</prefix>
+                </log>
+              </run>
+            </image>
+          </images>
+        </configuration>
+
+        <!-- Hooking into the lifecycle -->
+        <executions>
+          <execution>
+            <id>start</id>
+            <phase>pre-integration-test</phase>
+            <goals>
+              <goal>build</goal>
+              <goal>start</goal>
+            </goals>
+          </execution>
+          <execution>
+            <id>stop</id>
+            <phase>post-integration-test</phase>
+            <goals>
+              <goal>stop</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+
+      <!--
+       The Shade plugin simply packs all dependencies into a single jar, optionally with specifying a main class.
+       There are much more options, please refer to its documentation.
+
+       The important thing is, that the artifact created by this build will be replaced with the fat-jar
+       -->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-shade-plugin</artifactId>
+        <version>2.3</version>
+        <executions>
+          <execution>
+            <phase>package</phase>
+            <goals>
+              <goal>shade</goal>
+            </goals>
+            <configuration>
+              <transformers>
+                <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
+                  <mainClass>org.jolokia.docker.sample.LogService</mainClass>
+                </transformer>
+              </transformers>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+
+      <plugin>
+        <artifactId>maven-failsafe-plugin</artifactId>
+        <version>2.17</version>
+        <executions>
+          <execution>
+            <id>integration-test</id>
+            <goals>
+              <goal>integration-test</goal>
+            </goals>
+          </execution>
+          <execution>
+            <id>verify</id>
+            <goals>
+              <goal>verify</goal>
+            </goals>
+          </execution>
+        </executions>
+        <configuration>
+          <systemPropertyVariables>
+            <log.url>http://localhost:${tomcat.port}/jolokia</log.url>
+          </systemPropertyVariables>
+        </configuration>
+      </plugin>
+
+
+      <!-- Tell surefire to skip test, we are using the failsafe plugin -->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <version>2.10</version>
+        <configuration>
+          <skip>true</skip>
+        </configuration>
+      </plugin>
+
+      <!-- Need 1.7 -->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <version>3.1</version>
+        <configuration>
+          <source>1.7</source>
+          <target>1.7</target>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+
+  <!-- ============================================================================================= -->
+
+  <dependencies>
+    <dependency>
+      <groupId>org.apache.tomcat</groupId>
+      <artifactId>tomcat-util</artifactId>
+      <version>${tomcat.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.apache.tomcat.embed</groupId>
+      <artifactId>tomcat-embed-core</artifactId>
+      <version>${tomcat.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.postgresql</groupId>
+      <artifactId>postgresql</artifactId>
+      <version>9.3-1100-jdbc41</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.flywaydb</groupId>
+      <artifactId>flyway-core</artifactId>
+      <version>3.1</version>
+    </dependency>
+
+    <!-- ======================================================================================  -->
+    <!-- Test -->
+
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <version>4.11</version>
+      <scope>test</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>com.jayway.restassured</groupId>
+      <artifactId>rest-assured</artifactId>
+      <version>2.3.1</version>
+      <scope>test</scope>
+    </dependency>
+  </dependencies>
+</project>
