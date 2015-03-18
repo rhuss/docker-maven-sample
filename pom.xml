@@ -13,6 +13,8 @@
     <tomcat.version>7.0.55</tomcat.version>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+    <!-- Docker Host to access for integration tests -->
+    <dockerHost>localhost</dockerHost>
   </properties>
 
   <build>
@@ -145,7 +147,7 @@
         </executions>
         <configuration>
           <systemPropertyVariables>
-            <log.url>http://localhost:${tomcat.port}/jolokia</log.url>
+            <log.url>http://${dockerHost}:${tomcat.port}/jolokia</log.url>
           </systemPropertyVariables>
         </configuration>
       </plugin>

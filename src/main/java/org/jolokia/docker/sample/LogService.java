@@ -1,9 +1,8 @@
 package org.jolokia.docker.sample;
 
-import java.io.*;
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.sql.*;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.*;
@@ -25,7 +24,7 @@ public class LogService extends HttpServlet {
 
     public LogService() throws SQLException {
         // Prepare JDBC Url from environment variable
-        connectionUrl = getConnectionUrl(System.getenv("DB_PORT"));
+        connectionUrl = "jdbc:postgresql://db:" + System.getenv("DB_PORT_5432_TCP_PORT") + "/postgres";
 
         // Create DB schema (as defined in resources/db/migration/)
         Flyway flyway = new Flyway();
@@ -51,15 +50,6 @@ public class LogService extends HttpServlet {
     public static void main(String[] args) throws LifecycleException, SQLException {
         // Start embedded tomcat with a LogService servlet and wait forever
         setupAndStartTomcat(new LogService());
-    }
-
-    // Extract connection URL from environment variable as setup by Docker
-    private String getConnectionUrl(String dockerEnvVar) {
-        Pattern pattern = Pattern.compile("^[^/]*//(.*)");
-        Matcher matcher = pattern.matcher(dockerEnvVar);
-        matcher.matches();
-        String hostAndPort = matcher.group(1);
-        return "jdbc:postgresql://" + hostAndPort + "/postgres";
     }
 
     // ===================================================================================
