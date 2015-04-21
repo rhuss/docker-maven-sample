@@ -14,7 +14,7 @@
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
     <!-- Docker Host to access for integration tests -->
-    <dockerHost>localhost</dockerHost>
+    <dockerHost>${env.DOCKER_HOST}</dockerHost>
   </properties>
 
   <build>
@@ -147,7 +147,8 @@
         </executions>
         <configuration>
           <systemPropertyVariables>
-            <log.url>http://${dockerHost}:${tomcat.port}</log.url>
+            <log.host>${dockerHost}</log.host>
+            <log.port>${tomcat.port}</log.port>
           </systemPropertyVariables>
         </configuration>
       </plugin>
