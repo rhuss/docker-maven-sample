@@ -13,8 +13,6 @@
     <tomcat.version>7.0.55</tomcat.version>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-    <!-- Docker Host to access for integration tests -->
-    <dockerHost>${env.DOCKER_HOST}</dockerHost>
   </properties>
 
   <build>
@@ -23,7 +21,7 @@
         <!-- The Docker Maven plugin is used to create docker image with the fat jar -->
         <groupId>org.jolokia</groupId>
         <artifactId>docker-maven-plugin</artifactId>
-        <version>0.11.3-SNAPSHOT</version>
+        <version>0.11.3</version>
         <configuration>
           <logDate>default</logDate>
           <autoPull>true</autoPull>
@@ -52,6 +50,7 @@
                   <port>tomcat.port:8080</port>
                 </ports>
                 <wait>
+                  <!-- ${docker.host.address} is set automatically by the plugin -->
                   <url>http://${docker.host.address}:${tomcat.port}/access</url>
                   <time>10000</time>
                 </wait>

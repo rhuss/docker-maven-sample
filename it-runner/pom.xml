@@ -1,0 +1,41 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <!--
+     Simple demo project demonstrating the usage of rhuss/docker-maven-plugin
+  -->
+  <groupId>org.jolokia</groupId>
+  <artifactId>docker-maven-sample-it-runner</artifactId>
+  <version>0.0.1</version>
+
+  <build>
+    <plugins>
+      <plugin>
+        <!-- The Docker Maven plugin is used to create docker image with the fat jar -->
+        <groupId>org.jolokia</groupId>
+        <artifactId>docker-maven-plugin</artifactId>
+        <version>0.11.3</version>
+        <configuration>
+          <autoPull>true</autoPull>
+          <showLogs>true</showLogs>
+          <images>
+            <!-- Microservice image holding the FAT-Jar with embedded tomcat -->
+            <image>
+              <!-- Alias name which can used for linking containers during runtime -->
+              <alias>builder</alias>
+              <name>jolokia/${project.artifactId}:${project.version}</name>
+
+              <!-- Building the image -->
+              <build>
+                <assembly>
+                  <dockerFileDir>${project.basedir}/docker</dockerFileDir>
+                </assembly>
+              </build>
+            </image>
+          </images>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+</project>
