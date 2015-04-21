@@ -22,6 +22,11 @@ public class LogService extends HttpServlet {
 
     private final String connectionUrl;
 
+    public static void main(String[] args) throws LifecycleException, SQLException {
+        // Start embedded tomcat with a LogService servlet and wait forever
+        setupAndStartTomcat(new LogService());
+    }
+
     public LogService() throws SQLException {
         // Prepare JDBC Url from environment variable
         connectionUrl = "jdbc:postgresql://db:" + System.getenv("DB_PORT_5432_TCP_PORT") + "/postgres";
@@ -47,10 +52,6 @@ public class LogService extends HttpServlet {
         }
     }
 
-    public static void main(String[] args) throws LifecycleException, SQLException {
-        // Start embedded tomcat with a LogService servlet and wait forever
-        setupAndStartTomcat(new LogService());
-    }
 
     // ===================================================================================
 

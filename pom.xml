@@ -23,7 +23,7 @@
         <!-- The Docker Maven plugin is used to create docker image with the fat jar -->
         <groupId>org.jolokia</groupId>
         <artifactId>docker-maven-plugin</artifactId>
-        <version>0.11.1-SNAPSHOT</version>
+        <version>0.11.3-SNAPSHOT</version>
         <configuration>
           <logDate>default</logDate>
           <autoPull>true</autoPull>
@@ -147,7 +147,7 @@
         </executions>
         <configuration>
           <systemPropertyVariables>
-            <log.url>http://${dockerHost}:${tomcat.port}/jolokia</log.url>
+            <log.url>http://${dockerHost}:${tomcat.port}</log.url>
           </systemPropertyVariables>
         </configuration>
       </plugin>
