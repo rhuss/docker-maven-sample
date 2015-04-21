@@ -52,7 +52,7 @@
                   <port>tomcat.port:8080</port>
                 </ports>
                 <wait>
-                  <url>http://localhost:${tomcat.port}/access</url>
+                  <url>http://${docker.host.address}:${tomcat.port}/access</url>
                   <time>10000</time>
                 </wait>
                 <links>
@@ -147,8 +147,7 @@
         </executions>
         <configuration>
           <systemPropertyVariables>
-            <log.host>${dockerHost}</log.host>
-            <log.port>${tomcat.port}</log.port>
+            <log.url>http://${docker.host.address}:${tomcat.port}</log.url>
           </systemPropertyVariables>
         </configuration>
       </plugin>
