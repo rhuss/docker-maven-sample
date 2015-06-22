@@ -21,7 +21,7 @@
         <!-- The Docker Maven plugin is used to create docker image with the fat jar -->
         <groupId>org.jolokia</groupId>
         <artifactId>docker-maven-plugin</artifactId>
-        <version>0.11.3</version>
+        <version>0.12.0</version>
         <configuration>
           <logDate>default</logDate>
           <autoPull>true</autoPull>
@@ -41,7 +41,11 @@
                 <ports>
                   <port>8080</port>
                 </ports>
-                <command>java -Djava.security.egd=file:/dev/./urandom -jar /maven/docker-sample.jar</command>
+                <cmd>
+                  <shell>
+                    java -Djava.security.egd=file:/dev/./urandom -jar /maven/docker-sample.jar
+                  </shell>
+                </cmd>
               </build>
 
               <!-- Running the container -->
