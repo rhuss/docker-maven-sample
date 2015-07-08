@@ -21,7 +21,7 @@
         <!-- The Docker Maven plugin is used to create docker image with the fat jar -->
         <groupId>org.jolokia</groupId>
         <artifactId>docker-maven-plugin</artifactId>
-        <version>0.12.0</version>
+        <version>0.13.0</version>
         <configuration>
           <logDate>default</logDate>
           <autoPull>true</autoPull>
@@ -80,6 +80,9 @@
                   <color>yellow</color> <prefix>DB</prefix>
                 </log>
               </run>
+              <watch>
+                <mode>none</mode>
+              </watch>
             </image>
           </images>
         </configuration>
