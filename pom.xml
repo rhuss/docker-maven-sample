@@ -21,7 +21,7 @@
         <!-- The Docker Maven plugin is used to create docker image with the fat jar -->
         <groupId>org.jolokia</groupId>
         <artifactId>docker-maven-plugin</artifactId>
-        <version>0.13.3</version>
+        <version>0.13.4</version>
         <configuration>
           <logDate>default</logDate>
           <autoPull>true</autoPull>
@@ -72,7 +72,6 @@
               <alias>db</alias>
               <name>postgres:8</name>
               <run>
-                <naming-strategy>alias</naming-strategy>
                 <wait>
                   <log>database system is ready to accept connections</log>
                   <time>20000</time>

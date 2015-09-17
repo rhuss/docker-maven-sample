@@ -15,7 +15,7 @@
         <!-- The Docker Maven plugin is used to create docker image with the fat jar -->
         <groupId>org.jolokia</groupId>
         <artifactId>docker-maven-plugin</artifactId>
-        <version>0.11.3</version>
+        <version>0.13.4</version>
         <configuration>
           <autoPull>true</autoPull>
           <showLogs>true</showLogs>
