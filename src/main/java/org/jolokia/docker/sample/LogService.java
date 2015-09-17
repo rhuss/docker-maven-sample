@@ -29,7 +29,8 @@ public class LogService extends HttpServlet {
 
     public LogService() throws SQLException {
         // Prepare JDBC Url from environment variable
-        connectionUrl = "jdbc:postgresql://db:" + System.getenv("DB_PORT_5432_TCP_PORT") + "/postgres";
+        connectionUrl = "jdbc:postgresql://db:" + System.getenv("DB_PORT_5432_TCP_PORT")
+                        + "/postgres";
 
         // Create DB schema (as defined in resources/db/migration/)
         Flyway flyway = new Flyway();
