@@ -63,7 +63,7 @@
                   <link>db</link>
                 </links>
                 <log>
-                  <color>cyan</color> <prefix>TC</prefix> <file>/tmp/tomcat.log</file>
+                  <color>cyan</color> <prefix>TC</prefix>
                 </log>
               </run>
             </image>
