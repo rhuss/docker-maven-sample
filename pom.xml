@@ -13,6 +13,7 @@
     <tomcat.version>7.0.55</tomcat.version>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+    <tomcat.host>${docker.host.address}</tomcat.host>
   </properties>
 
   <build>
@@ -56,7 +57,7 @@
                 </ports>
                 <wait>
                   <!-- ${docker.host.address} is set automatically by the plugin -->
-                  <url>http://${docker.host.address}:${tomcat.port}/access</url>
+                  <url>http://${tomcat.host}:${tomcat.port}/access</url>
                   <time>10000</time>
                 </wait>
                 <links>
@@ -154,7 +155,7 @@
         </executions>
         <configuration>
           <systemPropertyVariables>
-            <log.url>http://${docker.host.address}:${tomcat.port}</log.url>
+            <log.url>http://${tomcat.host}:${tomcat.port}</log.url>
           </systemPropertyVariables>
         </configuration>
       </plugin>
